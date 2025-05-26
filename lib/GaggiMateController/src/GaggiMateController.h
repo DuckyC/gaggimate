@@ -6,7 +6,8 @@
 #include <peripherals/DigitalInput.h>
 #include <peripherals/DimmedPump.h>
 #include <peripherals/Heater.h>
-#include <peripherals/Max31855Thermocouple.h>
+// #include <peripherals/Max31855Thermocouple.h>
+#include <peripherals/Max6675Thermocouple.h>
 #include <peripherals/PressureSensor.h>
 #include <peripherals/SimplePump.h>
 #include <peripherals/SimpleRelay.h>
@@ -36,7 +37,7 @@ class GaggiMateController {
     ControllerConfig _config = ControllerConfig{};
     NimBLEServerController _ble;
 
-    Max31855Thermocouple *thermocouple = nullptr;
+    TemperatureSensor *temperatureSensor = nullptr;
     Heater *heater = nullptr;
     SimpleRelay *valve = nullptr;
     SimpleRelay *alt = nullptr;

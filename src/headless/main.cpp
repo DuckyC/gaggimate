@@ -1,15 +1,13 @@
 #include "main.h"
-#include "ControllerConfig.h"
-#include "GaggiMateController.h"
 
-GaggiMateController controller;
+Controller controller;
 
 void setup() {
     Serial.begin(115200);
-    delay(5000);
     controller.setup();
 }
 
 void loop() {
     controller.loop();
+    delay(2);
 }

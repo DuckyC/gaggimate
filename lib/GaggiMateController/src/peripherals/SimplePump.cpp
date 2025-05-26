@@ -23,7 +23,7 @@ void SimplePump::loop() {
     unsigned long currentCycleDuration = (currentMillis - lastCycleStart);
 
     // Turn pump ON for the first `onSteps` steps and OFF for the remainder
-    ESP_LOGV(LOG_TAG, "Switching to: %u", currentCycleDuration < onTime);
+    // ESP_LOGV(LOG_TAG, "Switching to: %u", currentCycleDuration < onTime);
     digitalWrite(_pin, currentCycleDuration < onTime ? _pumpOn : !_pumpOn); // Relay on
 }
 

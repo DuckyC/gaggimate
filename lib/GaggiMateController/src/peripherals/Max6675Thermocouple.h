@@ -1,20 +1,20 @@
-#ifndef MAX31855THERMOCOUPLE_H
-#define MAX31855THERMOCOUPLE_H
+#ifndef MAX6675THERMOCOUPLE_H
+#define MAX6675THERMOCOUPLE_H
 
 #include "TemperatureSensor.h"
-#include <MAX31855.h>
+#include <MAX6675.h>
 #include <freertos/FreeRTOS.h>
 #include <freertos/task.h>
 
-constexpr int MAX31855_UPDATE_INTERVAL = 250;
-constexpr int MAX31855_MAX_ERRORS = 20;
+constexpr int MAX6675_UPDATE_INTERVAL = 250;
+constexpr int MAX6675_MAX_ERRORS = 20;
 
 using temperature_callback_t = std::function<void(float)>;
 using temperature_error_callback_t = std::function<void()>;
 
-class Max31855Thermocouple : public TemperatureSensor {
+class Max6675Thermocouple : public TemperatureSensor {
   public:
-    Max31855Thermocouple(int csPin, int misoPin, int sckPin, const temperature_callback_t &callback,
+  Max6675Thermocouple(int csPin, int misoPin, int sckPin, const temperature_callback_t &callback,
                          const temperature_error_callback_t &error_callback);
     float read() override;
     bool hasError() override;
@@ -23,7 +23,7 @@ class Max31855Thermocouple : public TemperatureSensor {
     void loop();
 
   private:
-    MAX31855 *max31855;
+    MAX6675 *max6675;
     xTaskHandle taskHandle;
 
     int errors = 0;
@@ -36,8 +36,8 @@ class Max31855Thermocouple : public TemperatureSensor {
     temperature_callback_t callback;
     temperature_error_callback_t error_callback;
 
-    const char *LOG_TAG = "Max31855Thermocouple";
+    const char *LOG_TAG = "MAX6675Thermocouple";
     static void monitorTask(void *arg);
 };
 
-#endif // MAX31855THERMOCOUPLE_H
+#endif // MAX6675THERMOCOUPLE_H

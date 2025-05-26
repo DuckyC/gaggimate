@@ -6,9 +6,9 @@
 #include <freertos/task.h>
 
 GaggiMateController::GaggiMateController() {
-    configs.push_back(GM_STANDARD_REV_1X);
-    configs.push_back(GM_STANDARD_REV_2X);
-    configs.push_back(GM_PRO_REV_1x);
+    // configs.push_back(GM_STANDARD_REV_1X);
+    // configs.push_back(GM_STANDARD_REV_2X);
+    // configs.push_back(GM_PRO_REV_1x);
 }
 
 void GaggiMateController::setup() {
@@ -18,11 +18,16 @@ void GaggiMateController::setup() {
     String systemInfo = make_system_info(_config);
     _ble.initServer(systemInfo);
 
-    this->thermocouple = new Max31855Thermocouple(
+    ESP_LOGI(LOG_TAG, "Initializing peripherals...");
+
+    this->temperatureSensor = new Max31855Thermocouple(
         _config.maxCsPin, _config.maxMisoPin, _config.maxSckPin, [this](float temperature) { _ble.sendTemperature(temperature); },
         [this]() { thermalRunawayShutdown(); });
+//  this->temperatureSensor = new Max6675Thermocouple(
+//         _config.maxCsPin, _config.maxMisoPin, _config.maxSckPin, [this](float temperature) { _ble.sendTemperature(temperature); },
+//         [this]() { thermalRunawayShutdown(); });
     this->heater = new Heater(
-        this->thermocouple, _config.heaterPin, [this]() { thermalRunawayShutdown(); },
+        this->temperatureSensor, _config.heaterPin, [this]() { thermalRunawayShutdown(); },
         [this](float Kp, float Ki, float Kd) { _ble.sendAutotuneResult(Kp, Ki, Kd); });
     this->valve = new SimpleRelay(_config.valvePin, _config.valveOn);
     this->alt = new SimpleRelay(_config.altPin, _config.altOn);
@@ -37,13 +42,30 @@ void GaggiMateController::setup() {
     }
     this->brewBtn = new DigitalInput(_config.brewButtonPin, [this](const bool state) { _ble.sendBrewBtnState(state); });
     this->steamBtn = new DigitalInput(_config.steamButtonPin, [this](const bool state) { _ble.sendSteamBtnState(state); });
-    this->thermocouple->setup();
+
+    ESP_LOGI(LOG_TAG, "Running setup for peripherals...");
+
+    ESP_LOGI(LOG_TAG, "Temperature Sensor");
+    this->temperatureSensor->setup();
+
+    ESP_LOGI(LOG_TAG, "Heater");
     this->heater->setup();
+
+    ESP_LOGI(LOG_TAG, "Valve");
     this->valve->setup();
+
+    ESP_LOGI(LOG_TAG, "ALT");
     this->alt->setup();
+
+    ESP_LOGI(LOG_TAG, "Pump");
     this->pump->setup();
+
+    ESP_LOGI(LOG_TAG, "Brew Button");
     this->brewBtn->setup();
+
+    ESP_LOGI(LOG_TAG, "Steam Button");
     this->steamBtn->setup();
+
     if (_config.capabilites.pressure) {
         pressureSensor->setup();
     }
@@ -76,23 +98,23 @@ void GaggiMateController::loop() {
 void GaggiMateController::registerBoardConfig(ControllerConfig config) { configs.push_back(config); }
 
 void GaggiMateController::detectBoard() {
-    pinMode(DETECT_EN_PIN, OUTPUT);
-    pinMode(DETECT_VALUE_PIN, INPUT_PULLDOWN);
-    digitalWrite(DETECT_EN_PIN, HIGH);
-    uint16_t millivolts = analogReadMilliVolts(DETECT_VALUE_PIN);
-    digitalWrite(DETECT_EN_PIN, LOW);
-    int boardId = round(((float)millivolts) / 100.0f - 0.5f);
-    ESP_LOGI(LOG_TAG, "Detected Board ID: %d", boardId);
-    for (ControllerConfig config : configs) {
-        if (config.autodetectValue == boardId) {
-            _config = config;
-            ESP_LOGI(LOG_TAG, "Using Board: %s", _config.name.c_str());
-            return;
-        }
-    }
-    ESP_LOGW(LOG_TAG, "No compatible board detected.");
-    delay(5000);
-    ESP.restart();
+    // pinMode(DETECT_EN_PIN, OUTPUT);
+    // pinMode(DETECT_VALUE_PIN, INPUT_PULLDOWN);
+    // digitalWrite(DETECT_EN_PIN, HIGH);
+    // uint16_t millivolts = analogReadMilliVolts(DETECT_VALUE_PIN);
+    // digitalWrite(DETECT_EN_PIN, LOW);
+    // int boardId = round(((float)millivolts) / 100.0f - 0.5f);
+    // ESP_LOGI(LOG_TAG, "Detected Board ID: %d", boardId);
+    // for (ControllerConfig config : configs) {
+    //     if (config.autodetectValue == boardId) {
+    _config = GM_PRO_REV_1x;
+    ESP_LOGI(LOG_TAG, "Using Board: %s", _config.name.c_str());
+    //         return;
+    //     }
+    // }
+    // ESP_LOGW(LOG_TAG, "No compatible board detected.");
+    // delay(5000);
+    // ESP.restart();
 }
 
 void GaggiMateController::detectAddon() {

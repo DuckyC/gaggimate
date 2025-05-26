@@ -107,7 +107,7 @@ const ControllerConfig GM_PRO_REV_1x = {.name = "GaggiMate Pro Rev 1.x",
                                         .pumpSensePin = 21,
                                         .pumpOn = 1,
                                         .valvePin = 10,
-                                        .valveOn = 1,
+                                        .valveOn = 0,
                                         .altPin = 47,
                                         .altOn = 1,
                                         .pressureScl = 41,
@@ -126,8 +126,8 @@ const ControllerConfig GM_PRO_REV_1x = {.name = "GaggiMate Pro Rev 1.x",
                                         .ext4Pin = 12,
                                         .ext5Pin = 13,
                                         .capabilites = {
-                                            .dimming = true,
-                                            .pressure = true,
+                                            .dimming = false,
+                                            .pressure = false,
                                         }};
 
 #endif // CONTROLLERCONFIG_H

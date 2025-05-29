@@ -1,14 +1,16 @@
 #include "main.h"
-#include <lvgl.h>
 
-Controller controller;
-
+Controller* controller;
+DefaultUI* ui;
 void setup() {
     Serial.begin(115200);
-    controller.setup();
+    controller = new Controller();
+    ui = new DefaultUI(controller, controller->getPluginManager());
+    controller->setup();
+    ui->init();
 }
 
 void loop() {
-    controller.loop();
+    controller->loop();
     delay(2);
 }
